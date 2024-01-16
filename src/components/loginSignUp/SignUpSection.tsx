@@ -1,4 +1,24 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+
+import { initializeApp } from "firebase/app";
+import firebaseConfig from "@/firebaseConfig/FireBaseConfig";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  updateProfile,
+  User,
+} from "firebase/auth";
+import {
+  addDoc,
+  collection,
+  doc,
+  getDoc,
+  getFirestore,
+  setDoc,
+} from "firebase/firestore";
+
+const app = initializeApp(firebaseConfig);
+
 type signUpSectionProps = { signInORSignUp: (signInORSignUp: boolean) => void };
 const SignUpSection = (props: signUpSectionProps) => {
   type userData = {
@@ -6,12 +26,14 @@ const SignUpSection = (props: signUpSectionProps) => {
     mail: string;
     password: string;
     cPassword: string;
+    uniqueId?: string;
   };
   const [signUpForm, setSignUpForm] = useState({
     name: "",
     mail: "",
     password: "",
     cPassword: "",
+    uniqueId: "",
   });
   const [validationError, setValidationError] = useState({
     nameError: "",
@@ -78,36 +100,85 @@ const SignUpSection = (props: signUpSectionProps) => {
     setSignUpForm({ ...signUpForm, [e.target.name]: e.target.value.trim() });
   };
 
-  const handleSignUP = (e: any) => {
+  const handleSignUp = async (e: any) => {
     e.preventDefault();
+
     const validationResult = validation();
+
     if (
       validationResult.nameError === "" &&
       validationResult.mailError === "" &&
       validationResult.passwordError === "" &&
       validationResult.cPasswordError === ""
     ) {
-      const storedUsers = JSON.parse(localStorage.getItem("users")!) || [];
-      const isDuplicateEmail = storedUsers.some(
-        (user: userData) => user.mail === signUpForm.mail
-      );
-      if (isDuplicateEmail) {
-      } else {
-        const updatedUsers = [signUpForm, ...storedUsers];
-        localStorage.setItem("users", JSON.stringify(updatedUsers));
-        setUsers(updatedUsers);
-        setSignUpForm({
-          name: "",
-          mail: "",
-          password: "",
-          cPassword: "",
-        });
-        console.log("User added successfully");
+      try {
+        const auth = getAuth();
+        const userCredential = await createUserWithEmailAndPassword(
+          auth,
+          signUpForm.mail,
+          signUpForm.password
+        );
+
+        const user: User | null = userCredential.user;
+        if (user) {
+          await updateProfile(user, {
+            displayName: signUpForm.name,
+          });
+          console.log("Success. The user is created in Firebase");
+          alert("User created");
+
+          const db = getFirestore();
+          const userDetailsDocRef = doc(db, "users", "userDetails");
+
+          const userDetailsSnapshot = await getDoc(userDetailsDocRef);
+          const currentData = userDetailsSnapshot.data();
+
+          if (currentData) {
+            const updatedData = {
+              ...currentData,
+              users: [
+                ...(currentData.users || []),
+                {
+                  name: signUpForm.name,
+                  email: signUpForm.mail,
+                  password: signUpForm.password,
+                },
+              ],
+            };
+
+            await setDoc(userDetailsDocRef, updatedData);
+            console.log("User details added to userDetails document");
+          } else {
+            await setDoc(userDetailsDocRef, {
+              users: [
+                {
+                  name: signUpForm.name,
+                  email: signUpForm.mail,
+                  password: signUpForm.password,
+                },
+              ],
+            });
+            console.log("User details document created with the first user");
+          }
+          setSignUpForm({
+            name: "",
+            mail: "",
+            password: "",
+            cPassword: "",
+            uniqueId: "",
+          });
+        } else {
+          console.error("Failed to create user");
+          alert("Failed to create user");
+        }
+      } catch (error: any) {
+        console.log(error);
+        alert(error.message);
       }
-    } else {
     }
   };
 
+  console.log(users);
   return (
     <>
       <button
@@ -169,7 +240,7 @@ const SignUpSection = (props: signUpSectionProps) => {
         <div className="flex  items-center justify-between">
           <p> </p>
           <button
-            onClick={handleSignUP}
+            onClick={handleSignUp}
             type="submit"
             className="text-white bg-primary font-bold px-10 py-3 rounded-md"
           >

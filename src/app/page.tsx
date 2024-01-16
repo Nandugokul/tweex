@@ -1,7 +1,6 @@
 import Image from "next/image";
 import LoginImg from "../../public/assets/loginImg.jpg";
 import DynamicSection from "@/components/loginSignUp/DynamicSection";
-
 const App = () => {
   return (
     <>

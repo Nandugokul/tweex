@@ -1,9 +1,16 @@
 "use client";
 import LoginSection from "@/components/loginSignUp/LoginSection";
 import SignUpSection from "@/components/loginSignUp/SignUpSection";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import userDetails from "@/data/userDummyData";
 
 const DynamicSection = () => {
+  useEffect(() => {
+    userDetails.forEach((item) => {
+      localStorage.setItem("users", JSON.stringify(item));
+    });
+  }, []);
+
   const [showLogin, setShowLogin] = useState(true);
   const handleShowLogin = (signInORSignUpData: boolean) => {
     console.log(signInORSignUpData);

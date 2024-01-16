@@ -1,11 +1,17 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-``;
+import { useDispatch } from "react-redux";
+import firebaseConfig from "@/firebaseConfig/FireBaseConfig";
+import { initializeApp } from "firebase/app";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+
+const app = initializeApp(firebaseConfig);
 
 type loginSectionProps = { signInORSignUp: (signInORSignUp: boolean) => void };
 
 const LoginSection = (props: loginSectionProps) => {
   const router = useRouter();
+  const userDataDispatch = useDispatch();
   type userData = {
     name: string;
     mail: string;
@@ -27,23 +33,25 @@ const LoginSection = (props: loginSectionProps) => {
     setLoginForm({ ...loginForm, [e.target.name]: e.target.value.trim() });
   };
 
-  const handleLogin = (e: any) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const isUserValid = storedUserData.some(
-      (item) =>
-        item.mail === loginForm.mail && item.password === loginForm.password
-    );
-
-    if (isUserValid) {
+    try {
+      const auth = getAuth();
+      const signIn = await signInWithEmailAndPassword(
+        auth,
+        loginForm.mail,
+        loginForm.password
+      );
       console.log("Login successful");
       setIncorrectMailOrPassword(false);
-      router.push("/feeds");
-    } else {
-      console.log("Invalid credentials");
-      setIncorrectMailOrPassword(true);
+      router.push(`${signIn.user.displayName}/feeds`);
+    } catch (error: any) {
+      console.log(error);
+      alert(error.message);
     }
   };
+
   return (
     <>
       <button
