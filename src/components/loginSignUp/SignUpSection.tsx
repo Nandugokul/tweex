@@ -124,7 +124,6 @@ const SignUpSection = (props: signUpSectionProps) => {
           await updateProfile(user, {
             displayName: signUpForm.name,
           });
-          console.log("Success. The user is created in Firebase");
           alert("User created");
 
           const db = getFirestore();
@@ -147,7 +146,6 @@ const SignUpSection = (props: signUpSectionProps) => {
             };
 
             await setDoc(userDetailsDocRef, updatedData);
-            console.log("User details added to userDetails document");
           } else {
             await setDoc(userDetailsDocRef, {
               users: [
@@ -178,7 +176,6 @@ const SignUpSection = (props: signUpSectionProps) => {
     }
   };
 
-  console.log(users);
   return (
     <>
       <button

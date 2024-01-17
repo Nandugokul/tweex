@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 import firebaseConfig from "@/firebaseConfig/FireBaseConfig";
 import { initializeApp } from "firebase/app";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { userDataSliceActions } from "@/store/UserDataStore";
 
 const app = initializeApp(firebaseConfig);
 
@@ -43,8 +44,8 @@ const LoginSection = (props: loginSectionProps) => {
         loginForm.mail,
         loginForm.password
       );
-      console.log("Login successful");
       setIncorrectMailOrPassword(false);
+      userDataDispatch(userDataSliceActions.setLogedInUser(loginForm.mail));
       router.push(`${signIn.user.displayName}/feeds`);
     } catch (error: any) {
       console.log(error);

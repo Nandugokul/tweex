@@ -9,14 +9,8 @@ type userData = {
 
 const UserListing = (props: userData) => {
   const [followedOrNot, setFollowedOrNot] = useState(false);
-  const handleFollowUser = (e: any) => {
-    console.log(e.target.value);
-    console.log(e.target.dataset.mail);
-    if (followedOrNot) {
-      setFollowedOrNot(false);
-    } else {
-      setFollowedOrNot(true);
-    }
+  const handleFollowUser = () => {
+    setFollowedOrNot((prevFollowed) => !prevFollowed);
   };
   return (
     <>
@@ -31,7 +25,6 @@ const UserListing = (props: userData) => {
               followedOrNot ? "hidden" : "block"
             }`}
             onClick={handleFollowUser}
-            data-mail={props.mail}
           >
             {`${followedOrNot ? "following" : "Follow"}`}
           </button>
@@ -39,7 +32,6 @@ const UserListing = (props: userData) => {
           <button
             className={`${followedOrNot ? "block" : "hidden"}`}
             onClick={handleFollowUser}
-            data-mail={props.mail}
           >
             <Image src={GreenTick} alt="done" />
           </button>
@@ -48,4 +40,5 @@ const UserListing = (props: userData) => {
     </>
   );
 };
+
 export default UserListing;

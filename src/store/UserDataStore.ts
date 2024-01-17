@@ -11,8 +11,11 @@ const initialState = {
 export const userDataSlice = createSlice({
     name:"userDataSlice",
     initialState:initialState,
-    reducers:{setLogedInUser(state,action){
-        console.log(action.payload)
+    reducers:{setLogedInUser(state, action) {
+        console.log(action.payload);
+        const payloadString = JSON.stringify(action.payload);
+        state.logedInUser = action.payload;
+        localStorage.setItem("activeUser", payloadString);
     }
 
     }

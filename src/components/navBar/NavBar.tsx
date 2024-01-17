@@ -4,7 +4,6 @@ import NavBarLinks from "./NavBarLinks";
 
 const NavBar = () => {
   let pathName = usePathname().split("/")[1];
-  console.log(pathName);
   const links = [
     { link: "Feeds", path: `/${pathName}/feeds` },
     { link: "Users", path: `/${pathName}/users` },

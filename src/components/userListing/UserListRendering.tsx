@@ -23,7 +23,6 @@ const UserListRendering = () => {
       try {
         const querySnapshot = await getDocs(usersCollection);
         querySnapshot.forEach((doc) => {
-          console.log(doc.data().users);
           setFireBaseStoredUsers(doc.data().users);
         });
       } catch (error) {
@@ -41,7 +40,6 @@ const UserListRendering = () => {
     uniqueId: string;
     cPassword: string;
   };
-  console.log(fireBaseStoredUsers);
   return (
     <>
       {fireBaseStoredUsers.map((item) => (
