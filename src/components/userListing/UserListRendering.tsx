@@ -11,6 +11,7 @@ const UserListRendering = () => {
     name: string;
     email: string;
     password: string;
+    id: string;
   };
   const [fireBaseStoredUsers, setFireBaseStoredUsers] = useState<
     fireBaseUserData[]
@@ -19,27 +20,20 @@ const UserListRendering = () => {
     const fetchData = async () => {
       const db = getFirestore();
       const usersCollection = collection(db, "users");
-
+      let dataArray: fireBaseUserData[] = [];
       try {
-        const querySnapshot = await getDocs(usersCollection);
-        querySnapshot.forEach((doc) => {
-          setFireBaseStoredUsers(doc.data().users);
+        const snapshots = await getDocs(usersCollection);
+        let data: fireBaseUserData[] = snapshots.docs.map((doc) => {
+          return doc.data() as fireBaseUserData;
         });
+        setFireBaseStoredUsers(data);
       } catch (error) {
         console.error("Error fetching data: ", error);
       }
     };
-
     fetchData();
   }, []);
 
-  type UserData = {
-    name: string;
-    mail: string;
-    password: string;
-    uniqueId: string;
-    cPassword: string;
-  };
   return (
     <>
       {fireBaseStoredUsers.map((item) => (
@@ -48,6 +42,7 @@ const UserListRendering = () => {
           name={item.name}
           mail={item.email}
           password={item.password}
+          id={item.id}
         />
       ))}
     </>

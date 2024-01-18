@@ -5,6 +5,7 @@ import firebaseConfig from "@/firebaseConfig/FireBaseConfig";
 import { initializeApp } from "firebase/app";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { userDataSliceActions } from "@/store/UserDataStore";
+import { collection, getDocs, getFirestore } from "firebase/firestore";
 
 const app = initializeApp(firebaseConfig);
 
@@ -45,8 +46,21 @@ const LoginSection = (props: loginSectionProps) => {
         loginForm.password
       );
       setIncorrectMailOrPassword(false);
-      userDataDispatch(userDataSliceActions.setLogedInUser(loginForm.mail));
       router.push(`${signIn.user.displayName}/feeds`);
+      let db = getFirestore();
+      let docRef = collection(db, "users");
+      let idOfTheUser = await getDocs(docRef);
+      idOfTheUser.forEach((doc) => {
+        if (doc.data().email == loginForm.mail) {
+          let loggedInUser = {
+            loggedInUserMail: loginForm.mail,
+            loggedInUserId: doc.id,
+            loggedInUserName: signIn.user.displayName,
+          };
+
+          userDataDispatch(userDataSliceActions.setLogedInUser(loggedInUser));
+        }
+      });
     } catch (error: any) {
       console.log(error);
       alert(error.message);

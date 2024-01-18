@@ -1,23 +1,29 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+
 type state ={
-    logeInUser:string
+    logedInUser:object[];
 }
 
 const initialState = {
-    logedInUser:""
+    logedInUserMail:"",
+    loggedInUserId:"",
+    loggedInUserName:""
 }
+
+
+
 
 export const userDataSlice = createSlice({
     name:"userDataSlice",
     initialState:initialState,
     reducers:{setLogedInUser(state, action) {
-        console.log(action.payload);
         const payloadString = JSON.stringify(action.payload);
-        state.logedInUser = action.payload;
+        state.logedInUserMail = action.payload.loggedInUserMail;
+        state.loggedInUserId = action.payload.loggedInUserId;
+        state.loggedInUserName = action.payload.loggedInUserName;
         localStorage.setItem("activeUser", payloadString);
     }
-
     }
 })
 export const userDataSliceActions = userDataSlice.actions
