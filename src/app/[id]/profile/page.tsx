@@ -64,7 +64,6 @@ const Profile = () => {
           setFireStoreWholeUserData(wholeUserData);
           if (activeUser) {
             let activeUserId = activeUser.loggedInUserId;
-            console.log(activeUserId);
             let followersData = wholeUserData.filter((item) => {
               if (item.following && item.following.length > 0) {
                 return item.following.map((user) => user.id == activeUserId);
@@ -112,37 +111,12 @@ const Profile = () => {
             </div>
           </div>
         </header>
-        <PostFollowersFollowing />
+        <PostFollowersFollowing
+          following={userIsFollowedBy}
+          followers={userIsFollowing}
+        />
       </section>
     </>
   );
 };
 export default Profile;
-// useEffect(() => {
-//   const getWholeUserData = async () => {
-//     try {
-//       const userData = await FetchUserDataFromFireBase();
-
-//       // Map DocumentData to WholeUserData
-//       const wholeUserData = userData?.map((doc) => ({
-//         email: doc.email,
-//         id: doc.id,
-//         name: doc.name,
-//         password: doc.password,
-//         followedBy: doc.followedBy,
-//         following: doc.following,
-//       }));
-
-//       // Check if wholeUserData is not undefined before setting the state
-//       if (wholeUserData !== undefined) {
-//         setFireStoreWholeUserData(wholeUserData);
-//       } else {
-//         console.error("WholeUserData is undefined");
-//       }
-//     } catch (error) {
-//       console.error("Error fetching user data: ", error);
-//     }
-//   };
-
-//   getWholeUserData();
-// }, []);

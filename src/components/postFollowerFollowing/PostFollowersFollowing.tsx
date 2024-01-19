@@ -2,10 +2,32 @@ import PostIcon from "../../../public/assets/post.svg";
 import FollowerIcon from "../../../public/assets/followers.svg";
 import FollowingIcon from "../../../public/assets/following.svg";
 import Image from "next/image";
-import { useState } from "react";
+import { use, useState } from "react";
 import UserListing from "../userListing/UserListing";
-const PostFollowersFollowing = () => {
+
+type WholeUserData = {
+  email: string;
+  followedBy?: followdata[];
+  id: string;
+  name: string;
+  password?: string;
+  following?: followdata[];
+};
+type followdata = {
+  id: string;
+  mail: string;
+};
+
+type props = {
+  followers: WholeUserData[];
+  following: WholeUserData[];
+};
+
+const PostFollowersFollowing = (props: props) => {
   const [followerFollowingTab, setFllowerFollowingTab] = useState("post");
+
+  console.log(props.followers);
+  console.log(props.following);
   return (
     <>
       <section className="flex space-x-20 max-w-screen-md m-auto justify-center ">
@@ -76,7 +98,16 @@ const PostFollowersFollowing = () => {
             followerFollowingTab == "following" ? "block" : "hidden"
           }`}
         >
-          <UserListing name={"following"} mail={"kjj"} id={"jaljdsafj"} />
+          {props.following.map((user) => {
+            return (
+              <UserListing
+                key={user.id}
+                name={user.name}
+                mail={user.email}
+                id={user.id}
+              />
+            );
+          })}
         </div>
 
         <div
@@ -84,7 +115,16 @@ const PostFollowersFollowing = () => {
             followerFollowingTab == "follower" ? "block" : "hidden"
           }`}
         >
-          <UserListing name={"follower"} mail={"kjj"} id={"jaljdsafj"} />
+          {props.followers.map((user) => {
+            return (
+              <UserListing
+                key={user.id}
+                name={user.name}
+                mail={user.email}
+                id={user.id}
+              />
+            );
+          })}
         </div>
       </section>
     </>
