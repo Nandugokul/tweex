@@ -16,14 +16,14 @@ import {
 type userData = {
   name: string;
   mail: string;
-  password: string;
+  password?: string;
   id: string;
   followedBY?: object[];
   following?: string[];
 };
 
 const UserListing = (props: userData) => {
-  const app = initializeApp(firebaseConfig);
+  initializeApp(firebaseConfig);
   const db = getFirestore();
   let docRef = collection(db, "users");
   const [followedOrNot, setFollowedOrNot] = useState(false);
@@ -44,9 +44,6 @@ const UserListing = (props: userData) => {
           if (data.exists() && data.data()) {
             const followedBy: mailAndId[] = data.data().followedBy || [];
 
-            console.log(followedBy);
-
-            console.log(logedInUserIdParsed.loggedInUserId);
             const isFollowed = followedBy.some(
               (element) => element.id === logedInUserIdParsed.loggedInUserId
             );
@@ -71,42 +68,99 @@ const UserListing = (props: userData) => {
       }
       try {
         const data = await getDocs(docRef);
-        data.forEach(async (document) => {
-          if (document.data().email === props.mail && !followedOrNot) {
-            let idOfTheUserToBeFollowed = document.id;
 
-            const userDocRef = doc(db, "users", idOfTheUserToBeFollowed);
-            await updateDoc(userDocRef, {
-              followedBy: arrayUnion({
-                id: parsedLoggedInUser.loggedInUserId,
-                mail: parsedLoggedInUser.loggedInUserMail,
-              }),
-            });
-            const userDocForFollowing = doc(
-              db,
-              "users",
-              parsedLoggedInUser.loggedInUserId
-            );
-            await updateDoc(userDocForFollowing, {
-              following: arrayUnion({
-                id: props.id,
-                mail: props.mail,
-              }),
-            });
+        for (const document of data.docs) {
+          const userData = document.data();
+          const userId = document.id;
+
+          if (userData.email === props.mail) {
+            const userDocRef = doc(db, "users", userId);
+
+            if (!followedOrNot) {
+              // Follow the user
+              await Promise.all([
+                updateDoc(userDocRef, {
+                  followedBy: arrayUnion({
+                    id: parsedLoggedInUser.loggedInUserId,
+                    mail: parsedLoggedInUser.loggedInUserMail,
+                  }),
+                }),
+                updateDoc(doc(db, "users", parsedLoggedInUser.loggedInUserId), {
+                  following: arrayUnion({
+                    id: props.id,
+                    mail: props.mail,
+                  }),
+                }),
+              ]);
+            } else {
+              // Unfollow the user
+              await Promise.all([
+                updateDoc(userDocRef, {
+                  followedBy: arrayRemove({
+                    id: parsedLoggedInUser.loggedInUserId,
+                    mail: parsedLoggedInUser.loggedInUserMail,
+                  }),
+                }),
+                updateDoc(doc(db, "users", parsedLoggedInUser.loggedInUserId), {
+                  following: arrayRemove({
+                    id: props.id,
+                    mail: props.mail,
+                  }),
+                }),
+              ]);
+            }
           }
-          if (followedOrNot) {
-            let idOfTheUserToBeUnfollowed = document.id;
-            const userDocRef = doc(db, "users", idOfTheUserToBeUnfollowed);
-            await updateDoc(userDocRef, {
-              followedBy: arrayRemove({
-                id: parsedLoggedInUser.loggedInUserId,
-                mail: parsedLoggedInUser.loggedInUserMail,
-              }),
-            });
-          }
-        });
+        }
       } catch (error) {
-        console.error("Error fetching data: ", error);
+        console.error("Error updating data: ", error);
+      }
+      try {
+        const data = await getDocs(docRef);
+
+        for (const document of data.docs) {
+          const userData = document.data();
+          const userId = document.id;
+
+          if (userData.email === props.mail) {
+            const userDocRef = doc(db, "users", userId);
+
+            if (!followedOrNot) {
+              // Follow the user
+              await Promise.all([
+                updateDoc(userDocRef, {
+                  followedBy: arrayUnion({
+                    id: parsedLoggedInUser.loggedInUserId,
+                    mail: parsedLoggedInUser.loggedInUserMail,
+                  }),
+                }),
+                updateDoc(doc(db, "users", parsedLoggedInUser.loggedInUserId), {
+                  following: arrayUnion({
+                    id: props.id,
+                    mail: props.mail,
+                  }),
+                }),
+              ]);
+            } else {
+              // Unfollow the user
+              await Promise.all([
+                updateDoc(userDocRef, {
+                  followedBy: arrayRemove({
+                    id: parsedLoggedInUser.loggedInUserId,
+                    mail: parsedLoggedInUser.loggedInUserMail,
+                  }),
+                }),
+                updateDoc(doc(db, "users", parsedLoggedInUser.loggedInUserId), {
+                  following: arrayRemove({
+                    id: props.id,
+                    mail: props.mail,
+                  }),
+                }),
+              ]);
+            }
+          }
+        }
+      } catch (error) {
+        console.error("Error updating data: ", error);
       }
     }
     fetchData();
