@@ -19,18 +19,11 @@ type followdata = {
 };
 
 const Profile = () => {
-  let userData = localStorage.getItem("activeUser");
   const [followersData, setFollowersData] = useState({
     following: [],
     followedBy: [],
   });
 
-  let parsedData;
-  if (userData !== null) {
-    parsedData = JSON.parse(userData);
-  } else {
-    console.log("No user data found in localStorage");
-  }
   const [userName, setUserName] = useState("");
   const [tabToShow, setTabToShow] = useState("");
   const [firestoreWholeUserData, setFireStoreWholeUserData] = useState<
@@ -38,6 +31,7 @@ const Profile = () => {
   >([]);
   const [userIsFollowedBy, setUserIsFollowedBy] = useState<WholeUserData[]>([]);
   const [userIsFollowing, setUserIsFollowing] = useState<WholeUserData[]>([]);
+  const [numberOfPosts, setNumberOfPosts] = useState(0);
   useEffect(() => {
     const activeUser = getActiveUser();
     if (activeUser) {
@@ -86,6 +80,10 @@ const Profile = () => {
     getWholeUserData();
   }, []);
 
+  const handlePostData = (data: any) => {
+    setNumberOfPosts(data);
+  };
+
   return (
     <>
       <section className="max-w-screen-lg m-auto">
@@ -99,7 +97,7 @@ const Profile = () => {
           <div className="flex">
             <div className="w-1/4"></div>
             <div className="space-x-16 mb-6">
-              <span className="text-black/40">Posts :</span>
+              <span className="text-black/40">Posts : {numberOfPosts}</span>
               <span className="text-black/40">
                 Following :{" "}
                 {followersData.following && followersData.following.length}
@@ -114,6 +112,7 @@ const Profile = () => {
         <PostFollowersFollowing
           following={userIsFollowedBy}
           followers={userIsFollowing}
+          numberOfPosts={handlePostData}
         />
       </section>
     </>

@@ -17,12 +17,11 @@ const SelfPost = (props: post) => {
           <div className="w-[10%]">
             <div className="border border-black/50 rounded-full h-12 w-12 "></div>
           </div>
-
           <div className="w-[65%] flex items-center">
-            <h1 className="text-black/50 font-normal text-xl">{props.post}</h1>
+            <h1 className="text-black/50 ">{props.post}</h1>
           </div>
 
-          <p className="text-black/50 font-light text-sm  flex items-end justify-end w-[25%]">
+          <p className="text-black/50 font-light text-sm  flex items-end justify-end w-[25%] ">
             {date}
           </p>
         </div>

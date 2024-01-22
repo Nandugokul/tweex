@@ -2,12 +2,13 @@ import PostIcon from "../../../public/assets/post.svg";
 import FollowerIcon from "../../../public/assets/followers.svg";
 import FollowingIcon from "../../../public/assets/following.svg";
 import Image from "next/image";
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import UserListing from "../userListing/UserListing";
 import getActiveUser from "@/functions/GetActuveUserData";
 import FetchPostsFromFireBase from "@/functions/GetPost";
 import { Timestamp } from "firebase/firestore";
 import SelfPost from "../posts/SelfPost";
+import FollowingListing from "../followingAndFollower/FollowingListing";
 
 type WholeUserData = {
   email: string;
@@ -25,6 +26,7 @@ type followdata = {
 type props = {
   followers: WholeUserData[];
   following: WholeUserData[];
+  numberOfPosts: any;
 };
 
 type post = {
@@ -46,14 +48,17 @@ const PostFollowersFollowing = (props: props) => {
         const posts = await FetchPostsFromFireBase(activeUser.loggedInUserId);
         if (posts && posts.posts !== undefined) {
           setPostsFromFireBase(posts.posts);
+          props.numberOfPosts(posts.posts.length);
         } else {
           console.log("Posts data is undefined or missing.");
         }
       }
     };
     postFetch();
-  }, []);
+  }, [props.followers, props.following]);
 
+  console.log(props.followers);
+  console.log(props.following);
   return (
     <>
       <section className="flex space-x-20 max-w-screen-md m-auto justify-center ">
@@ -137,7 +142,7 @@ const PostFollowersFollowing = (props: props) => {
         >
           {props.following.map((user) => {
             return (
-              <UserListing
+              <FollowingListing
                 key={user.id}
                 name={user.name}
                 mail={user.email}

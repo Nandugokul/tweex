@@ -58,113 +58,190 @@ const UserListing = (props: userData) => {
     followCheck();
   }, [props.id]);
 
-  const handleFollowUser = (e: any) => {
+  // const handleFollowUser = (e: any) => {
+  //   setFollowedOrNot((prevFollowed) => !prevFollowed);
+  //   async function fetchData() {
+  //     let loggedInUser = localStorage.getItem("activeUser");
+  //     let parsedLoggedInUser: any;
+  //     if (loggedInUser) {
+  //       parsedLoggedInUser = JSON.parse(loggedInUser);
+  //     }
+  //     try {
+  //       const data = await getDocs(docRef);
+
+  //       for (const document of data.docs) {
+  //         const userData = document.data();
+  //         const userId = document.id;
+
+  //         if (userData.email === props.mail) {
+  //           const userDocRef = doc(db, "users", userId);
+
+  //           if (!followedOrNot) {
+  //             // Follow the user
+  //             await Promise.all([
+  //               updateDoc(userDocRef, {
+  //                 followedBy: arrayUnion({
+  //                   id: parsedLoggedInUser.loggedInUserId,
+  //                   mail: parsedLoggedInUser.loggedInUserMail,
+  //                 }),
+  //               }),
+  //               updateDoc(doc(db, "users", parsedLoggedInUser.loggedInUserId), {
+  //                 following: arrayUnion({
+  //                   id: props.id,
+  //                   mail: props.mail,
+  //                 }),
+  //               }),
+  //             ]);
+  //           } else {
+  //             // Unfollow the user
+  //             await Promise.all([
+  //               updateDoc(userDocRef, {
+  //                 followedBy: arrayRemove({
+  //                   id: parsedLoggedInUser.loggedInUserId,
+  //                   mail: parsedLoggedInUser.loggedInUserMail,
+  //                 }),
+  //               }),
+  //               updateDoc(doc(db, "users", parsedLoggedInUser.loggedInUserId), {
+  //                 following: arrayRemove({
+  //                   id: props.id,
+  //                   mail: props.mail,
+  //                 }),
+  //               }),
+  //             ]);
+  //           }
+  //         }
+  //       }
+  //     } catch (error) {
+  //       console.error("Error updating data: ", error);
+  //     }
+  //     try {
+  //       const data = await getDocs(docRef);
+
+  //       for (const document of data.docs) {
+  //         const userData = document.data();
+  //         const userId = document.id;
+
+  //         if (userData.email === props.mail) {
+  //           const userDocRef = doc(db, "users", userId);
+
+  //           if (!followedOrNot) {
+  //             // Follow the user
+  //             await Promise.all([
+  //               updateDoc(userDocRef, {
+  //                 followedBy: arrayUnion({
+  //                   id: parsedLoggedInUser.loggedInUserId,
+  //                   mail: parsedLoggedInUser.loggedInUserMail,
+  //                 }),
+  //               }),
+  //               updateDoc(doc(db, "users", parsedLoggedInUser.loggedInUserId), {
+  //                 following: arrayUnion({
+  //                   id: props.id,
+  //                   mail: props.mail,
+  //                 }),
+  //               }),
+  //             ]);
+  //           } else {
+  //             // Unfollow the user
+  //             await Promise.all([
+  //               updateDoc(userDocRef, {
+  //                 followedBy: arrayRemove({
+  //                   id: parsedLoggedInUser.loggedInUserId,
+  //                   mail: parsedLoggedInUser.loggedInUserMail,
+  //                 }),
+  //               }),
+  //               updateDoc(doc(db, "users", parsedLoggedInUser.loggedInUserId), {
+  //                 following: arrayRemove({
+  //                   id: props.id,
+  //                   mail: props.mail,
+  //                 }),
+  //               }),
+  //             ]);
+  //           }
+  //         }
+  //       }
+  //     } catch (error) {
+  //       console.error("Error updating data: ", error);
+  //     }
+  //   }
+  //   fetchData();
+  // };
+
+  const handleFollowUser = async (e: any) => {
     setFollowedOrNot((prevFollowed) => !prevFollowed);
-    async function fetchData() {
-      let loggedInUser = localStorage.getItem("activeUser");
-      let parsedLoggedInUser: any;
-      if (loggedInUser) {
+
+    const loggedInUser = localStorage.getItem("activeUser");
+    let parsedLoggedInUser: any;
+
+    if (loggedInUser) {
+      try {
         parsedLoggedInUser = JSON.parse(loggedInUser);
-      }
-      try {
-        const data = await getDocs(docRef);
-
-        for (const document of data.docs) {
-          const userData = document.data();
-          const userId = document.id;
-
-          if (userData.email === props.mail) {
-            const userDocRef = doc(db, "users", userId);
-
-            if (!followedOrNot) {
-              // Follow the user
-              await Promise.all([
-                updateDoc(userDocRef, {
-                  followedBy: arrayUnion({
-                    id: parsedLoggedInUser.loggedInUserId,
-                    mail: parsedLoggedInUser.loggedInUserMail,
-                  }),
-                }),
-                updateDoc(doc(db, "users", parsedLoggedInUser.loggedInUserId), {
-                  following: arrayUnion({
-                    id: props.id,
-                    mail: props.mail,
-                  }),
-                }),
-              ]);
-            } else {
-              // Unfollow the user
-              await Promise.all([
-                updateDoc(userDocRef, {
-                  followedBy: arrayRemove({
-                    id: parsedLoggedInUser.loggedInUserId,
-                    mail: parsedLoggedInUser.loggedInUserMail,
-                  }),
-                }),
-                updateDoc(doc(db, "users", parsedLoggedInUser.loggedInUserId), {
-                  following: arrayRemove({
-                    id: props.id,
-                    mail: props.mail,
-                  }),
-                }),
-              ]);
-            }
-          }
-        }
       } catch (error) {
-        console.error("Error updating data: ", error);
+        console.error("Error parsing activeUser: ", error);
+        return;
       }
-      try {
-        const data = await getDocs(docRef);
-
-        for (const document of data.docs) {
-          const userData = document.data();
-          const userId = document.id;
-
-          if (userData.email === props.mail) {
-            const userDocRef = doc(db, "users", userId);
-
-            if (!followedOrNot) {
-              // Follow the user
-              await Promise.all([
-                updateDoc(userDocRef, {
-                  followedBy: arrayUnion({
-                    id: parsedLoggedInUser.loggedInUserId,
-                    mail: parsedLoggedInUser.loggedInUserMail,
-                  }),
-                }),
-                updateDoc(doc(db, "users", parsedLoggedInUser.loggedInUserId), {
-                  following: arrayUnion({
-                    id: props.id,
-                    mail: props.mail,
-                  }),
-                }),
-              ]);
-            } else {
-              // Unfollow the user
-              await Promise.all([
-                updateDoc(userDocRef, {
-                  followedBy: arrayRemove({
-                    id: parsedLoggedInUser.loggedInUserId,
-                    mail: parsedLoggedInUser.loggedInUserMail,
-                  }),
-                }),
-                updateDoc(doc(db, "users", parsedLoggedInUser.loggedInUserId), {
-                  following: arrayRemove({
-                    id: props.id,
-                    mail: props.mail,
-                  }),
-                }),
-              ]);
-            }
-          }
-        }
-      } catch (error) {
-        console.error("Error updating data: ", error);
-      }
+    } else {
+      console.error("activeUser not found in local storage");
+      return;
     }
-    fetchData();
+
+    const fetchDataAndUpdate = async () => {
+      try {
+        const data = await getDocs(docRef);
+
+        for (const document of data.docs) {
+          const userData = document.data();
+          const userId = document.id;
+
+          if (userData.email === props.mail) {
+            const userDocRef = doc(db, "users", userId);
+
+            const followUpdates = !followedOrNot
+              ? {
+                  followedBy: arrayUnion({
+                    id: parsedLoggedInUser.loggedInUserId,
+                    mail: parsedLoggedInUser.loggedInUserMail,
+                  }),
+                }
+              : {
+                  followedBy: arrayRemove({
+                    id: parsedLoggedInUser.loggedInUserId,
+                    mail: parsedLoggedInUser.loggedInUserMail,
+                  }),
+                };
+
+            const followingUpdates = !followedOrNot
+              ? {
+                  following: arrayUnion({
+                    id: props.id,
+                    mail: props.mail,
+                  }),
+                }
+              : {
+                  following: arrayRemove({
+                    id: props.id,
+                    mail: props.mail,
+                  }),
+                };
+
+            await Promise.all([
+              updateDoc(userDocRef, followUpdates),
+              updateDoc(
+                doc(db, "users", parsedLoggedInUser.loggedInUserId),
+                followingUpdates
+              ),
+            ]);
+          }
+        }
+      } catch (error) {
+        console.error("Error updating data: ", error);
+      }
+    };
+
+    await fetchDataAndUpdate();
   };
+
+  // Call the function
+
   return (
     <>
       <div className="max-w-screen-lg m-auto p-6 flex justify-between border-b border-black/10">

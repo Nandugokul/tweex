@@ -59,7 +59,7 @@ const Feeds = () => {
     const getFollowingOfTheUser = async () => {
       if (activeUser) {
         const userDetails = await getSingleUserData(activeUser.loggedInUserId);
-        if (userDetails) {
+        if (userDetails && userDetails.following !== undefined) {
           const users = userDetails.following.map((item: any) => item.id);
           users.forEach((element: string) => {});
           setUserIsFollowing(users);
