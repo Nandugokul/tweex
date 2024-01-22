@@ -2,8 +2,12 @@ import PostIcon from "../../../public/assets/post.svg";
 import FollowerIcon from "../../../public/assets/followers.svg";
 import FollowingIcon from "../../../public/assets/following.svg";
 import Image from "next/image";
-import { use, useState } from "react";
+import { use, useEffect, useState } from "react";
 import UserListing from "../userListing/UserListing";
+import getActiveUser from "@/functions/GetActuveUserData";
+import FetchPostsFromFireBase from "@/functions/GetPost";
+import { Timestamp } from "firebase/firestore";
+import SelfPost from "../posts/SelfPost";
 
 type WholeUserData = {
   email: string;
@@ -23,8 +27,32 @@ type props = {
   following: WholeUserData[];
 };
 
+type post = {
+  post: string;
+  postId: string;
+  time: Timestamp;
+  userId: string;
+  userName: string;
+};
+
 const PostFollowersFollowing = (props: props) => {
   const [followerFollowingTab, setFllowerFollowingTab] = useState("post");
+  let activeUser = getActiveUser();
+  const [postsFromFireBase, setPostsFromFireBase] = useState<post[]>([]);
+
+  useEffect(() => {
+    const postFetch = async () => {
+      if (activeUser) {
+        const posts = await FetchPostsFromFireBase(activeUser.loggedInUserId);
+        if (posts && posts.posts !== undefined) {
+          setPostsFromFireBase(posts.posts);
+        } else {
+          console.log("Posts data is undefined or missing.");
+        }
+      }
+    };
+    postFetch();
+  }, []);
 
   return (
     <>
@@ -89,7 +117,18 @@ const PostFollowersFollowing = (props: props) => {
         <div
           className={`${followerFollowingTab == "post" ? "block" : "hidden"}`}
         >
-          <UserListing name={"post"} mail={"kjj"} id={"jaljdsafj"} />
+          {postsFromFireBase.map((post) => {
+            return (
+              <SelfPost
+                key={post.postId}
+                userName={post.userName}
+                postId={post.postId}
+                post={post.post}
+                time={post.time}
+                userId={post.userId}
+              />
+            );
+          })}
         </div>
         <div
           className={`${

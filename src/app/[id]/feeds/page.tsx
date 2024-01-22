@@ -1,17 +1,30 @@
 "use client";
-import Post from "@/components/posts/Post";
 import AddPost from "@/functions/AddPost";
 import getActiveUser from "@/functions/GetActuveUserData";
+import FetchPostsFromFireBase from "@/functions/GetPost";
+import { useEffect, useState } from "react";
+import { Timestamp } from "firebase/firestore";
+import Post from "@/components/posts/Post";
+import getSingleUserData from "@/functions/GetSingleUserData";
 
-import { useState } from "react";
+type post = {
+  post: string;
+  postId: string;
+  time: Timestamp;
+  userId: string;
+  userName: string;
+};
+
 const Feeds = () => {
   const [postInputSection, setPostInputSection] = useState(false);
   const [postModalOpen, setPostModalOpen] = useState(false);
   const [postData, setPostData] = useState("");
+  const [userIsFollowing, setUserIsFollowing] = useState([]);
+  const [postsFromFireBase, setPostsFromFireBase] = useState<post[]>([]);
+  let activeUser = getActiveUser();
 
   const HandleAddPost = async () => {
-    let activeUser = getActiveUser();
-    if (activeUser) {
+    if (activeUser && postData.trim() !== "") {
       const resp = await AddPost(
         activeUser.loggedInUserId,
         activeUser.loggedInUserName,
@@ -19,6 +32,45 @@ const Feeds = () => {
       );
     }
   };
+
+  const postFetch = async (users: string[]) => {
+    try {
+      const feeds = await Promise.all(
+        users.map(async (userId: string) => {
+          const posts = await FetchPostsFromFireBase(userId);
+          if (posts && posts.posts !== undefined) {
+            return posts.posts;
+          } else {
+            console.log("Posts data is undefined or missing.");
+          }
+        })
+      );
+      const allFeeds = feeds.flatMap((feed) =>
+        feed !== undefined ? feed : []
+      );
+      console.log(allFeeds);
+      setPostsFromFireBase(allFeeds);
+    } catch (error) {
+      console.error("Error fetching posts:", error);
+    }
+  };
+
+  useEffect(() => {
+    const getFollowingOfTheUser = async () => {
+      if (activeUser) {
+        const userDetails = await getSingleUserData(activeUser.loggedInUserId);
+        if (userDetails) {
+          const users = userDetails.following.map((item: any) => item.id);
+          users.forEach((element: string) => {});
+          setUserIsFollowing(users);
+          console.log(users);
+          postFetch(users);
+        }
+      }
+    };
+
+    getFollowingOfTheUser();
+  }, []);
 
   return (
     <>
@@ -63,11 +115,18 @@ const Feeds = () => {
           </section>
         </div>
         <section className="mt-6">
-          <Post />
-          <Post />
-          <Post />
-          <Post />
-          <Post />
+          {postsFromFireBase.map((post) => {
+            return (
+              <Post
+                key={post.postId}
+                userName={post.userName}
+                postId={post.postId}
+                post={post.post}
+                time={post.time}
+                userId={post.userId}
+              />
+            );
+          })}
         </section>
       </section>
     </>

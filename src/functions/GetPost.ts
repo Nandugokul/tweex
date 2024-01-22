@@ -1,12 +1,15 @@
 import firebaseConfig from "@/firebaseConfig/FireBaseConfig";
 import { initializeApp } from "firebase/app";
-import { collection, getFirestore } from "firebase/firestore";
+import { doc, getDoc, getFirestore } from "firebase/firestore";
 
 initializeApp(firebaseConfig)
 const db =getFirestore()
-const docRef =collection(db,"posts")
 
 
-const FetchPostsFromFireBase =async()=>{
-
+const FetchPostsFromFireBase =async(userId:string)=>{
+    const docRef =doc(db,"posts",userId)
+    let posts = await getDoc(docRef)
+    return posts.data()
 }
+
+export default FetchPostsFromFireBase

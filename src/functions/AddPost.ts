@@ -1,6 +1,6 @@
 import firebaseConfig from "@/firebaseConfig/FireBaseConfig";
 import { initializeApp } from "firebase/app";
-import { updateDoc, doc, getFirestore, arrayUnion, getDoc, setDoc } from "firebase/firestore";
+import { updateDoc, doc, getFirestore, arrayUnion, getDoc, setDoc, Timestamp } from "firebase/firestore";
 
 initializeApp(firebaseConfig);
 const db = getFirestore();
@@ -15,14 +15,15 @@ const AddPost = async (userId: string, userName: string, post: string) => {
     try {
         const docSnap = await getDoc(postRef);
         const currentData = docSnap.data();
-
+        const timestamp =Timestamp.now()
         if (docSnap.exists()) {
             await updateDoc(postRef, {
                 posts: arrayUnion({
                     post: post,
                     userId: userId,
                     userName: userName,
-                    postId: postIdGenerator()
+                    postId: postIdGenerator(),
+                    time:timestamp
                 })
             });
         } else {
@@ -31,7 +32,8 @@ const AddPost = async (userId: string, userName: string, post: string) => {
                     post: post,
                     userId: userId,
                     userName: userName,
-                    postId: postIdGenerator()
+                    postId: postIdGenerator(),
+                    time:timestamp,
                 }]
             });
         }
