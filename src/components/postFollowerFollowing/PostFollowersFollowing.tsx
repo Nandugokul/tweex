@@ -26,8 +26,6 @@ type props = {
 const PostFollowersFollowing = (props: props) => {
   const [followerFollowingTab, setFllowerFollowingTab] = useState("post");
 
-  console.log(props.followers);
-  console.log(props.following);
   return (
     <>
       <section className="flex space-x-20 max-w-screen-md m-auto justify-center ">
