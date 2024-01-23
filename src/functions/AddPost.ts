@@ -38,7 +38,6 @@ const AddPost = async (userId: string, userName: string, post: string) => {
             });
         }
 
-        console.log("Post added successfully");
     } catch (error) {
         console.error("Error adding post:", error);
     }

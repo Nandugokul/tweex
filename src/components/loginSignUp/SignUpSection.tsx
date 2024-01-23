@@ -17,7 +17,7 @@ import {
   getFirestore,
   setDoc,
 } from "firebase/firestore";
-import { updateDoc } from "firebase/firestore/lite";
+import { toast } from "react-toastify";
 
 const app = initializeApp(firebaseConfig);
 
@@ -115,10 +115,17 @@ const SignUpSection = (props: signUpSectionProps) => {
     ) {
       try {
         const auth = getAuth();
-        const userCredential = await createUserWithEmailAndPassword(
-          auth,
-          signUpForm.mail,
-          signUpForm.password
+        const userCredential = await toast.promise(
+          createUserWithEmailAndPassword(
+            auth,
+            signUpForm.mail,
+            signUpForm.password
+          ),
+          {
+            pending: "Creating user",
+            success: "User created 👌",
+            error: "Unable to create user 🤯",
+          }
         );
 
         const user = userCredential.user;
@@ -139,7 +146,6 @@ const SignUpSection = (props: signUpSectionProps) => {
 
         await setDoc(userDetailsDocRef, updatedData);
 
-        alert("User created");
         setSignUpForm({
           name: "",
           mail: "",
@@ -149,7 +155,7 @@ const SignUpSection = (props: signUpSectionProps) => {
         });
       } catch (error: any) {
         console.error(error);
-        alert(error.message);
+        toast.error(error.message);
       }
     }
   };

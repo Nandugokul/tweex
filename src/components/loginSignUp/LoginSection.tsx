@@ -6,6 +6,7 @@ import { initializeApp } from "firebase/app";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { userDataSliceActions } from "@/store/UserDataStore";
 import { collection, getDocs, getFirestore } from "firebase/firestore";
+import { toast } from "react-toastify";
 
 const app = initializeApp(firebaseConfig);
 
@@ -40,10 +41,13 @@ const LoginSection = (props: loginSectionProps) => {
 
     try {
       const auth = getAuth();
-      const signIn = await signInWithEmailAndPassword(
-        auth,
-        loginForm.mail,
-        loginForm.password
+      const signIn = await toast.promise(
+        signInWithEmailAndPassword(auth, loginForm.mail, loginForm.password),
+        {
+          pending: "Loggin in",
+          success: "Login success 👌",
+          error: "Login Error 🤯",
+        }
       );
       setIncorrectMailOrPassword(false);
       router.push(`${signIn.user.displayName}/feeds`);

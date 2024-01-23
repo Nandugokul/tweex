@@ -47,7 +47,13 @@ const PostFollowersFollowing = (props: props) => {
       if (activeUser) {
         const posts = await FetchPostsFromFireBase(activeUser.loggedInUserId);
         if (posts && posts.posts !== undefined) {
-          setPostsFromFireBase(posts.posts);
+          const sortedPosts = posts.posts.sort(
+            (a: any, b: any) =>
+              b.time.seconds - a.time.seconds ||
+              b.time.nanoseconds - a.time.nanoseconds
+          );
+          setPostsFromFireBase(sortedPosts);
+          // setPostsFromFireBase(posts.posts);
           props.numberOfPosts(posts.posts.length);
         } else {
           console.log("Posts data is undefined or missing.");

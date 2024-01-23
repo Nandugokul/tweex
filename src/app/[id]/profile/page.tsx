@@ -87,7 +87,6 @@ const Profile = () => {
         console.error("Error fetching user data: ", error);
       }
     };
-
     getWholeUserData();
   }, []);
 
@@ -110,11 +109,13 @@ const Profile = () => {
               <span className="text-black/40">Posts : {numberOfPosts}</span>
               <span className="text-black/40">
                 Following :{" "}
-                {followersData.following && followersData.following.length}
+                {followersData.following ? followersData.following.length : "0"}
               </span>
               <span className="text-black/40">
                 Followers :{" "}
-                {followersData.followedBy && followersData.followedBy.length}
+                {followersData.followedBy
+                  ? followersData.followedBy.length
+                  : "0"}
               </span>
             </div>
           </div>
