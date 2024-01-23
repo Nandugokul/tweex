@@ -12,7 +12,7 @@ const NavBar = () => {
 
   return (
     <>
-      <nav className="flex items-center justify-between py-8 border-b border-black/20 sticky top-0 bg-white z-10">
+      <nav className="flex items-center justify-between py-8 border-b border-black/20 top-0 bg-white z-10">
         <h1 className="text-primary text-3xl font-bold">TweeX</h1>
         <div className="space-x-10">
           {links.map((item) => {

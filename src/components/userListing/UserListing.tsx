@@ -13,6 +13,7 @@ import {
   getFirestore,
   updateDoc,
 } from "firebase/firestore";
+import getActiveUser from "@/functions/GetActuveUserData";
 type userData = {
   name: string;
   mail: string;
@@ -168,22 +169,8 @@ const UserListing = (props: userData) => {
 
   const handleFollowUser = async (e: any) => {
     setFollowedOrNot((prevFollowed) => !prevFollowed);
-
-    const loggedInUser = localStorage.getItem("activeUser");
     let parsedLoggedInUser: any;
-
-    if (loggedInUser) {
-      try {
-        parsedLoggedInUser = JSON.parse(loggedInUser);
-      } catch (error) {
-        console.error("Error parsing activeUser: ", error);
-        return;
-      }
-    } else {
-      console.error("activeUser not found in local storage");
-      return;
-    }
-
+    parsedLoggedInUser = getActiveUser();
     const fetchDataAndUpdate = async () => {
       try {
         const data = await getDocs(docRef);
@@ -239,8 +226,6 @@ const UserListing = (props: userData) => {
 
     await fetchDataAndUpdate();
   };
-
-  // Call the function
 
   return (
     <>

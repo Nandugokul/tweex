@@ -48,7 +48,6 @@ const Feeds = () => {
       const allFeeds = feeds.flatMap((feed) =>
         feed !== undefined ? feed : []
       );
-      console.log(allFeeds);
       setPostsFromFireBase(allFeeds);
     } catch (error) {
       console.error("Error fetching posts:", error);
@@ -63,7 +62,6 @@ const Feeds = () => {
           const users = userDetails.following.map((item: any) => item.id);
           users.forEach((element: string) => {});
           setUserIsFollowing(users);
-          console.log(users);
           postFetch(users);
         }
       }

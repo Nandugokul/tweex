@@ -57,8 +57,6 @@ const PostFollowersFollowing = (props: props) => {
     postFetch();
   }, [props.followers, props.following]);
 
-  console.log(props.followers);
-  console.log(props.following);
   return (
     <>
       <section className="flex space-x-20 max-w-screen-md m-auto justify-center ">
@@ -158,14 +156,16 @@ const PostFollowersFollowing = (props: props) => {
           }`}
         >
           {props.followers.map((user) => {
-            return (
-              <UserListing
-                key={user.id}
-                name={user.name}
-                mail={user.email}
-                id={user.id}
-              />
-            );
+            if (activeUser?.loggedInUserId != user.id) {
+              return (
+                <UserListing
+                  key={user.id}
+                  name={user.name}
+                  mail={user.email}
+                  id={user.id}
+                />
+              );
+            }
           })}
         </div>
       </section>
