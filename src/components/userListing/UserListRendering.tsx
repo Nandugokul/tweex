@@ -36,7 +36,6 @@ const UserListRendering = () => {
     fetchData();
   }, []);
 
-  console.log(fireBaseStoredUsers);
   return (
     <>
       {fireBaseStoredUsers.map((item) => {

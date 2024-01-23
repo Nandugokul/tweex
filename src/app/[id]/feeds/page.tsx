@@ -48,8 +48,6 @@ const Feeds = () => {
       const allFeeds = feeds.flatMap((feed) =>
         feed !== undefined ? feed : []
       );
-      // setPostsFromFireBase(allFeeds);
-
       const sortedPosts = allFeeds.sort(
         (a, b) =>
           b.time.seconds - a.time.seconds ||
@@ -76,8 +74,6 @@ const Feeds = () => {
 
     getFollowingOfTheUser();
   }, []);
-
-  console.log(postsFromFireBase);
 
   return (
     <>
