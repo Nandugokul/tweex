@@ -48,7 +48,14 @@ const Feeds = () => {
       const allFeeds = feeds.flatMap((feed) =>
         feed !== undefined ? feed : []
       );
-      setPostsFromFireBase(allFeeds);
+      // setPostsFromFireBase(allFeeds);
+
+      const sortedPosts = allFeeds.sort(
+        (a, b) =>
+          b.time.seconds - a.time.seconds ||
+          b.time.nanoseconds - a.time.nanoseconds
+      );
+      setPostsFromFireBase(sortedPosts);
     } catch (error) {
       console.error("Error fetching posts:", error);
     }
@@ -69,6 +76,8 @@ const Feeds = () => {
 
     getFollowingOfTheUser();
   }, []);
+
+  console.log(postsFromFireBase);
 
   return (
     <>
