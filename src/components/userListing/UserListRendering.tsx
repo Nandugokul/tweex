@@ -4,6 +4,7 @@ import UserListing from "./UserListing";
 import { initializeApp } from "firebase/app";
 import { useEffect, useState } from "react";
 import { collection, getDocs, getFirestore } from "firebase/firestore";
+import getActiveUser from "@/functions/GetActuveUserData";
 const app = initializeApp(firebaseConfig);
 
 const UserListRendering = () => {
@@ -16,6 +17,7 @@ const UserListRendering = () => {
   const [fireBaseStoredUsers, setFireBaseStoredUsers] = useState<
     fireBaseUserData[]
   >([]);
+  let activeUser = getActiveUser();
   useEffect(() => {
     const fetchData = async () => {
       const db = getFirestore();
@@ -34,17 +36,22 @@ const UserListRendering = () => {
     fetchData();
   }, []);
 
+  console.log(fireBaseStoredUsers);
   return (
     <>
-      {fireBaseStoredUsers.map((item) => (
-        <UserListing
-          key={item.email}
-          name={item.name}
-          mail={item.email}
-          password={item.password}
-          id={item.id}
-        />
-      ))}
+      {fireBaseStoredUsers.map((item) => {
+        if (activeUser && item.id !== activeUser.loggedInUserId) {
+          return (
+            <UserListing
+              key={item.email}
+              name={item.name}
+              mail={item.email}
+              password={item.password}
+              id={item.id}
+            />
+          );
+        }
+      })}
     </>
   );
 };

@@ -23,15 +23,15 @@ const Profile = () => {
     following: [],
     followedBy: [],
   });
-
   const [userName, setUserName] = useState("");
-  const [tabToShow, setTabToShow] = useState("");
+  const [numberOfPosts, setNumberOfPosts] = useState(0);
+  const [refreshData, setRefreshData] = useState(false);
+
   const [firestoreWholeUserData, setFireStoreWholeUserData] = useState<
     WholeUserData[]
   >([]);
   const [userIsFollowedBy, setUserIsFollowedBy] = useState<WholeUserData[]>([]);
   const [userIsFollowing, setUserIsFollowing] = useState<WholeUserData[]>([]);
-  const [numberOfPosts, setNumberOfPosts] = useState(0);
   useEffect(() => {
     const activeUser = getActiveUser();
     if (activeUser) {
@@ -47,7 +47,18 @@ const Profile = () => {
       };
       singleUserData();
     }
-  }, []);
+  }, [refreshData]);
+
+  window.addEventListener("click", (event) => {
+    const clickedElement = event.target;
+
+    if (
+      clickedElement &&
+      (clickedElement as Element).classList.contains("followButton")
+    ) {
+      setRefreshData(!refreshData);
+    }
+  });
 
   useEffect(() => {
     const activeUser = getActiveUser();
@@ -83,7 +94,6 @@ const Profile = () => {
   const handlePostData = (data: any) => {
     setNumberOfPosts(data);
   };
-
   return (
     <>
       <section className="max-w-screen-lg m-auto">

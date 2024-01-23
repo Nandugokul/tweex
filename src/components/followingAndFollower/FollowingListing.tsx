@@ -32,6 +32,9 @@ const FollowingListing = (props: userData) => {
     mail: string;
     id: string;
   };
+
+  const [refreshData, setRefreshData] = useState(false);
+
   useEffect(() => {
     const followCheck = async () => {
       try {
@@ -57,7 +60,7 @@ const FollowingListing = (props: userData) => {
     };
 
     followCheck();
-  }, [props.id]);
+  }, [props.id, refreshData]);
 
   const handleFollowUser = (e: any) => {
     setFollowedOrNot((prevFollowed) => !prevFollowed);
@@ -162,6 +165,18 @@ const FollowingListing = (props: userData) => {
     }
     fetchData();
   };
+
+  window.addEventListener("click", (event) => {
+    const clickedElement = event.target;
+
+    if (
+      clickedElement &&
+      (clickedElement as Element).classList.contains("followButton")
+    ) {
+      setRefreshData(!refreshData);
+    }
+  });
+
   return (
     <>
       <div
@@ -175,7 +190,7 @@ const FollowingListing = (props: userData) => {
         </div>
         <div className="flex items-center justify-center text-center w-32">
           <button
-            className={`bg-primary px-9 py-2 m-0 rounded-lg text-white font-bold ${
+            className={`bg-primary px-9 py-2 m-0 rounded-lg text-white font-bold followButton ${
               followedOrNot ? "hidden" : "block"
             }`}
             onClick={handleFollowUser}
@@ -185,11 +200,11 @@ const FollowingListing = (props: userData) => {
           </button>
 
           <button
-            className={`${followedOrNot ? "block" : "hidden"}`}
+            className={`followButton ${followedOrNot ? "block" : "hidden"}`}
             onClick={handleFollowUser}
             value={props.mail}
           >
-            <Image src={GreenTick} alt="done" />
+            <Image src={GreenTick} alt="done" className="followButton" />
           </button>
         </div>
       </div>
